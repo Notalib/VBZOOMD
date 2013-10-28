@@ -16,6 +16,7 @@
     Private Declare Sub ZOOM_connection_connect Lib "YAZ5.dll" Alias "_ZOOM_connection_connect@12" (ByVal c As Integer, ByVal Host As String, ByVal portnum As Integer)
 
     Private Declare Sub ZOOM_connection_destroy Lib "YAZ5.dll" Alias "_ZOOM_connection_destroy@4" (ByVal c As Integer)
+    Private Declare Sub ZOOM_connection_close Lib "YAZ5.dll" Alias "_ZOOM_connection_close@4" (ByVal c As Integer)
 
     Private Declare Sub ZOOM_connection_option_set Lib "YAZ5.dll" Alias "_ZOOM_connection_option_set@12" (ByVal c As Integer, ByVal key As String, ByVal val As String)
 
@@ -32,13 +33,24 @@
 
     Private Declare Function ZOOM_connection_scan Lib "YAZ5.dll" Alias "_ZOOM_connection_scan@8" (ByVal c As Integer, ByVal q As String) As Integer
 
+    ''' <summary>
+    ''' Return the host name of the connections target Z39.50 server
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property Host() As String
         Get
             Return sHost
         End Get
     End Property
 
-
+    ''' <summary>
+    ''' Return the port number of the connections Z39.50 server
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property Port() As Integer
         Get
             Return lPortNum
@@ -47,10 +59,12 @@
 
 
     Private Sub priCheckConnection()
-        If bConnected = False Then
+        If bConnected = False And disposedValue = False Then
             ZOOM_connection_connect(hZOOM_connection, sHost, lPortNum)
             frndCheckForError()
             bConnected = True
+        ElseIf disposedValue = True Then
+            Throw New ZoomException(Me, ZoomUtil.ERR_INVALID_CONNECTION, "The ZoomConnection has been closed")
         End If
     End Sub
 
@@ -66,7 +80,7 @@
 
             m = ZOOM_connection_errmsg(hZOOM_connection)
 
-            Return CopyString(m, -1)
+            Return ZoomUtil.CopyString(m, -1)
         End Get
     End Property
 
@@ -76,78 +90,69 @@
 
             m = ZOOM_connection_addinfo(hZOOM_connection)
 
-            Return CopyString(m, -1)
+            Return ZoomUtil.CopyString(m, -1)
         End Get
     End Property
-
-    Friend Sub frndSetHost(h As String)
-        sHost = h
-    End Sub
-
-    Friend Sub frndSetPortNum(p As Integer)
-        lPortNum = p
-    End Sub
-
 
     Friend Sub frndCheckForError()
         Dim zec As Integer
 
-        zec = ErrorCode
+        zec = Me.ErrorCode
 
         If zec <> 0 Then
-            Throw New ZoomException(Me, ERR_ZOOM_ERROR, zec, ErrorMessage, AdditionalInfo)
+            Throw New ZoomException(Me, ZoomUtil.ERR_ZOOM_ERROR, zec, ErrorMessage, AdditionalInfo)
         End If
     End Sub
 
-    'Public Function Search(myqry As Object) As ZoomResultSet
-    '    Dim qry As ZoomQuery
-    '    Dim hzrs As Integer
-    '    Dim zrs As New ZoomResultSet
+    Public Function Search(myqry As ZoomQuery) As ZoomResultSet
+        Dim qry As ZoomQuery
+        Dim hzrs As Integer
+        Dim zrs As New ZoomResultSet
 
-    '    qry = myqry
+        qry = myqry
 
-    '    priCheckConnection()
+        priCheckConnection()
 
-    '    hzrs = ZOOM_connection_search(hZOOM_connection, qry.frndGetQueryHandle)
-    '    frndCheckForError()
+        hzrs = ZOOM_connection_search(hZOOM_connection, qry.frndGetQueryHandle)
+        frndCheckForError()
 
-    '    zrs.frndSetConnection(Me)
-    '    zrs.frndSetResultSetHandle(hzrs)
+        zrs.frndSetConnection(Me)
+        zrs.frndSetResultSetHandle(hzrs)
 
-    '    Return zrs
-    'End Function
+        Return zrs
+    End Function
 
-    'Public Function Scan(qry As Object) As ZoomScanSet
-    '    Dim hzss As Integer
-    '    Dim zss As New ZoomScanSet
+    Public Function Scan(qry As String) As ZoomScanSet
+        Dim hzss As Integer
+        Dim zss As New ZoomScanSet
 
-    '    priCheckConnection()
+        priCheckConnection()
 
-    '    hzss = ZOOM_connection_scan(hZOOM_connection, CStr(qry))
-    '    frndCheckForError()
+        hzss = ZOOM_connection_scan(hZOOM_connection, qry)
+        frndCheckForError()
 
-    '    zss.frndSetConnection(Me)
-    '    zss.frndSetScanSetHandle(hzss)
+        zss.frndSetConnection(Me)
+        zss.frndSetScanSetHandle(hzss)
 
-    '    Return zss
-    'End Function
+        Return zss
+    End Function
 
     Public Property ZoomOption(name As String) As String
         Get
             Dim ret As Integer
             Dim v As String
 
-            ValidateOption(Me, name)
+            ZoomUtil.ValidateOption(Me, name)
 
             ret = ZOOM_connection_option_get(hZOOM_connection, name)
             frndCheckForError()
 
-            v = CopyString(ret, -1)
+            v = ZoomUtil.CopyString(ret, -1)
 
             Return v
         End Get
         Set(value As String)
-            ValidateOption(Me, name, value)
+            ZoomUtil.ValidateOption(Me, name, value)
 
             ZOOM_connection_option_set(hZOOM_connection, name, value)
             frndCheckForError()
@@ -175,6 +180,10 @@
 
     End Sub
 
+    Public Sub Close()
+        Me.Dispose()
+    End Sub
+
 
 #Region "IDisposable Support"
     Private disposedValue As Boolean ' To detect redundant calls
@@ -183,18 +192,18 @@
     Protected Overridable Sub Dispose(disposing As Boolean)
         If Not Me.disposedValue Then
             If disposing Then
-                ' TODO: dispose managed state (managed objects).
+                'No managed state to dispose
             End If
 
             If hZOOM_connection <> 0 Then
                 ZOOM_connection_destroy(hZOOM_connection)
             End If
+            hZOOM_connection = 0
 
         End If
         Me.disposedValue = True
     End Sub
 
-    ' TODO: override Finalize() only if Dispose(ByVal disposing As Boolean) above has code to free unmanaged resources.
     Protected Overrides Sub Finalize()
         ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
         Dispose(False)

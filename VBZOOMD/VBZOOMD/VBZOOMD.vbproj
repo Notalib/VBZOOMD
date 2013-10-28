@@ -84,6 +84,7 @@
     </Compile>
     <Compile Include="ZoomException.vb" />
     <Compile Include="ZoomQuery.vb" />
+    <Compile Include="ZoomRecord.vb" />
     <Compile Include="ZoomResultSet.vb" />
     <Compile Include="ZoomScanSet.vb" />
     <Compile Include="ZoomUtil.vb" />
@@ -120,6 +121,7 @@
     <Content Include="yaz5.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="yaz5_exports.txt" />
     <Content Include="zlib1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
