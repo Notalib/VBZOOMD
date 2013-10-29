@@ -15,6 +15,8 @@
     Public Const ERR_INVALID_SCAN_FIELD As Integer = 106
     Public Const ERR_INVALID_CONNECTION As Integer = 107
     Public Const ERR_NOT_SUPPORTED As Integer = 108
+    Public Const ERR_DEPRECATED_FUNCTION As Integer = 109
+
     Public Const ERR_UNSUPPORTED_RAW_TYPE As Integer = 111
     Public Const ERR_INVALID_OPTION_VALUE As Integer = 112
 

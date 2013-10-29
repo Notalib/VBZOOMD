@@ -24,7 +24,13 @@ Public Class ZoomRecord
     Private Declare Sub ZOOM_record_destroy Lib "YAZ5.dll" Alias "_ZOOM_record_destroy@4" (ByVal rec As Integer)
     Private Declare Function ZOOM_record_get Lib "YAZ5.dll" Alias "_ZOOM_record_get@12" (ByVal rec As Integer, ByVal typ As String, ByRef size As Integer) As Integer
 
+    Public Function GetField(qry As String) As String
+        Throw New ZoomException(Me, ZoomUtil.ERR_DEPRECATED_FUNCTION, "The GetField function is deprecated.")
+    End Function
 
+    Public Function GetField(qry As String, xmlns As String) As String
+        Throw New ZoomException(Me, ZoomUtil.ERR_DEPRECATED_FUNCTION, "The GetField function is deprecated.")
+    End Function
 
     Friend Sub frndSetMARCCharcterEncoding(ignore As Boolean, assumed As String)
         bIgnoreMARCCharacterEncoding = ignore
