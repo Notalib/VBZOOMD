@@ -35,6 +35,7 @@ Public Class HomeController
             ext = ".xml"
         End If
 
+        'TODO: The VBZOOMD Library no longer support the GetField method, so the queries will not work
         Dim qs As String = Server.UrlDecode(Request.QueryString.ToString)
         Dim query As String = ""
         Dim xmlns As String = ""
