@@ -61,6 +61,7 @@
       <li><a href="<%:Url.Action("one", New With {.id = "1099891.opac"})%>">one/1099891.opac</a></li>
       <li><a href="<%:Url.Action("one", New With {.id = "1099891.mods"})%>">one/1099891.mods</a></li>
       <li><a href="<%:Url.Action("one", New With {.id = "1099891.dc"})%>">one/1099891.dc</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "1099891.html"})%>">one/1099891.html</a></li>
     </ul>
 
     <h3>Retreive records based on a Barcode Number</h3>
@@ -70,17 +71,19 @@
       <li><a href="<%:Url.Action("one", New With {.id = "30112024718303.opac"})%>">one/30112024718303.opac</a></li>
       <li><a href="<%:Url.Action("one", New With {.id = "30112024718303.mods"})%>">one/30112024718303.mods</a></li>
       <li><a href="<%:Url.Action("one", New With {.id = "30112024718303.dc"})%>">one/30112024718303.dc</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "30112024718303.html"})%>">one/30112024718303.html</a></li>
     </ul>
 
     <h3>Retreive records based on a Call Number</h3>
     <p>This call number is actually "738 C817 v.12:75", but because of the colon is must be turned into "738 C817 v.12__COLON__75".  Also, this is an example of a Call Number
     that corresponds to multiple Bib Records where only one of those records will be returned.</p>
     <ul>
-      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.12__COLON__75.marc"})%>">one/738 C817 v.12__COLON__75.marc</a></li>
-      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.12__COLON__75.text"})%>">one/738 C817 v.12__COLON__75.text</a></li>
-      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.12__COLON__75.opac"})%>">one/738 C817 v.12__COLON__75.opac</a></li>
-      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.12__COLON__75.mods"})%>">one/738 C817 v.12__COLON__75.mods</a></li>
-      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.12__COLON__75.dc"})%>">one/738 C817 v.12__COLON__75.dc</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.13__COLON__4.marc"})%>">one/738 C817 v.13__COLON__4.marc</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.13__COLON__4.text"})%>">one/738 C817 v.13__COLON__4.text</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.13__COLON__4.opac"})%>">one/738 C817 v.13__COLON__4.opac</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.13__COLON__4.mods"})%>">one/738 C817 v.13__COLON__4.mods</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.13__COLON__4.dc"})%>">one/738 C817 v.13__COLON__4.dc</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "738 C817 v.13__COLON__4.html"})%>">one/738 C817 v.13__COLON__4.html</a></li>
     </ul>
     <p>
     All of the formats which are returned will have one or more of the folloowing XML processing instructions (PIs) appended to the end:
