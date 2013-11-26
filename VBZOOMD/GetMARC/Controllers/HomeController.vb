@@ -108,28 +108,36 @@ Public Class HomeController
 
 
 
-            'Dim zc As VBZOOMC.ZoomConnection = zf.CreateZoomConnection("z3950.carli.illinois.edu", 210)
-            Dim zc As New ZoomConnection("voyager-batch.carli.illinois.edu", 14590)
-            zc.ZoomOption("databaseName") = "voyager"
+            Dim zc As New ZoomConnection(ConfigurationManager.AppSettings.Item("ZHost"), ConfigurationManager.AppSettings.Item("ZPort"))
+            zc.ZoomOption("databaseName") = ConfigurationManager.AppSettings.Item("ZDatabase")
             If ext = ".opc" Or ext = ".opac" Then
                 zc.ZoomOption("preferredRecordSyntax") = "OPAC"
             Else
                 zc.ZoomOption("preferredRecordSyntax") = "USmarc"
             End If
-            zc.ZoomOption("user") = "UIU"
-            zc.ZoomOption("elementSetName") = "F"
-            zc.ZoomOption("timeout") = 30
+            zc.ZoomOption("user") = ConfigurationManager.AppSettings.Item("ZUser")
+            zc.ZoomOption("elementSetName") = ConfigurationManager.AppSettings.Item("ZElementSetName")
+            zc.ZoomOption("timeout") = ConfigurationManager.AppSettings.Item("ZTimeout")
 
-            Dim zquery As ZoomQuery
+            Dim zquery As ZoomQuery = Nothing
             Dim zrs As ZoomResultSet = Nothing
             For tries As Integer = 0 To qnum
                 Try
                     zquery = New ZoomQuery(qry(tries))
                     zrs = zc.Search(zquery)
                 Catch ex As Exception
+                    If zrs IsNot Nothing Then zrs.Dispose()
                     zrs = Nothing
+                    If zquery IsNot Nothing Then zquery.Dispose()
+                    zquery = Nothing
                     If tries >= qnum Then
-                        ReturnHTTPStatus(500, "Z39.50 Error: " & ex.Message)
+                        ReturnHTTPStatus(502, "Z39.50 Error: " & ex.Message)
+                        Return New HttpStatusCodeResult(502, "Bad Gateway--Z39.50")
+                        If zc IsNot Nothing Then
+                            zc.Close()
+                            zc.Dispose()
+                        End If
+                        zc = Nothing
                         Exit Function
                     End If
                 End Try
@@ -226,6 +234,20 @@ Public Class HomeController
                 Else
                     ReturnHTTPStatus(404, "Could not find record number " & marc_id)
                 End If
+
+                If zr IsNot Nothing Then zr.Dispose()
+                If zrs IsNot Nothing Then zrs.Dispose()
+                If zquery IsNot Nothing Then zquery.Dispose()
+                If zc IsNot Nothing Then
+                    zc.Close()
+                    zc.Dispose()
+                End If
+
+                zr = Nothing
+                zrs = Nothing
+                zquery = Nothing
+                zc = Nothing
+
             Else
                 ReturnHTTPStatus(404, "Could not find record number " & marc_id)
             End If
@@ -233,6 +255,7 @@ Public Class HomeController
             ReturnHTTPStatus(404, "Could not find record number " & cnum)
         End If
         Response.Write(vbCrLf & postscript)
+        Return New EmptyResult
     End Function
 
     Private Sub ReturnHTTPStatus(ByVal code As Long, ByVal msg As String)
