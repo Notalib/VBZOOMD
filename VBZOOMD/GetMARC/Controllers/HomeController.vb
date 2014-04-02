@@ -189,7 +189,10 @@ Public Class HomeController
                         ReturnHTTPStatus(400, "Unrecognized XPointer scheme '" & qtype & "'; use 'xpath1' instead")
                     Else
                         Try
-                            Response.Write(zr.XMLData.OuterXml)
+                            Dim xwr As New XmlTextWriter(Response.OutputStream, Text.Encoding.UTF8)
+                            xwr.Formatting = Formatting.Indented
+                            zr.XMLData.Save(xwr)
+                            'Response.Write(zr.XMLData.OuterXml)
                         Catch ex As Exception
                             If ext = ".opc" Or ext = ".opac" Then
                                 ReturnHTTPStatus(500, "The OPAC format is not be available for this record try the MARC XML format instead:  <a href='" & marc_id & ".xml'>" & marc_id & ".xml</a>")
