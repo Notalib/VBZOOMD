@@ -148,6 +148,10 @@ Public Class HomeController
                 End If
             Next
 
+            If v.HasValue AndAlso v = True Then
+                postscript = postscript & "<?v true ?>" & vbCrLf
+            End If
+
             If zrs.GetSize > 0 Then
                 postscript = postscript & "<?count " & zrs.GetSize & " ?>" & vbCrLf
                 Dim zr As ZoomRecord = zrs.GetRecord(0)
@@ -289,6 +293,8 @@ Public Class HomeController
 
     Private Sub ValidationEventHandler(ByVal sender As Object, ByVal e As ValidationEventArgs)
         ReturnHTTPStatus(500, String.Format("XML {0}: {1}", e.Severity, e.Message))
+        postscript = postscript & "<?valid false ?>" & vbCrLf
+
     End Sub
 
     Private Sub ReturnHTTPStatus(ByVal code As Long, ByVal msg As String)
