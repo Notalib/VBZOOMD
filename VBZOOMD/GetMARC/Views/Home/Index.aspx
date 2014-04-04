@@ -13,7 +13,7 @@
 
     <p>
     This is a web service used to retrieve data from the UIUC Voyager Library Catalog given a Bib Id, Call Number, or Barcode Number.  It supports one action with three kinds of 
-    identifiers and four possible return formats.  The URL format is as follows:  <b>/getmarc/one.aspx/identifier.ext</b>.
+    identifiers and four possible return formats.  The URL format is as follows:  <b>/getmarc/one.aspx/identifier.ext[?v=true]</b>.
     </p>
 
     <p>
@@ -53,10 +53,16 @@
    </dl>
    <p>If the extension is ommitted, marc is assumed.</p>
 
+    <p>
+        The optional [?v=true] parameter indicates that the MARC XML returned from the Z39.50 target should be validated against the XML schema before further processing.
+        Note that only the source MARC XML will be validated, even if the selected return type is MODS, DC, or some other XML schema.
+    </p>
+
     <h2>Here are some examples:</h2>
     <h3>Retreive records based on a Bib Id</h3>
     <ul>
       <li><a href="<%:Url.Action("one", New With {.id = "1099891.marc"})%>">one/1099891.marc</a></li>
+      <li><a href="<%:Url.Action("one", New With {.id = "1099891.marc", .v = True})%>">one/1099891.marc?v=true</a></li>
       <li><a href="<%:Url.Action("one", New With {.id = "1099891.text"})%>">one/1099891.text</a></li>
       <li><a href="<%:Url.Action("one", New With {.id = "1099891.opac"})%>">one/1099891.opac</a></li>
       <li><a href="<%:Url.Action("one", New With {.id = "1099891.mods"})%>">one/1099891.mods</a></li>
