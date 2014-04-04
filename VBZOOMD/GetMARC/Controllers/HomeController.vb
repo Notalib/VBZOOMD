@@ -191,7 +191,11 @@ Public Class HomeController
                         Try
                             Dim xwr As New XmlTextWriter(Response.OutputStream, Text.Encoding.UTF8)
                             xwr.Formatting = Formatting.Indented
-                            zr.XMLData.Save(xwr)
+                            Dim xmldoc As XmlDocument = zr.XMLData
+                            Dim attr As XmlAttribute = xmldoc.CreateAttribute("xsi", "schemaLocation", "http://www.w3.org/2001/XMLSchema-instance")
+                            attr.Value = "http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+                            xmldoc.DocumentElement.Attributes.Append(attr)
+                            xmldoc.Save(xwr)
                             'Response.Write(zr.XMLData.OuterXml)
                         Catch ex As Exception
                             If ext = ".opc" Or ext = ".opac" Then
