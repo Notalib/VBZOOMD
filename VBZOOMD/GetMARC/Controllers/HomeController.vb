@@ -3,6 +3,7 @@ Imports VBZOOMD
 Imports System.Xml
 Imports System.Xml.Xsl
 Imports System.Net
+Imports System.Xml.Schema
 
 Public Class HomeController
     Inherits System.Web.Mvc.Controller
@@ -13,7 +14,7 @@ Public Class HomeController
         Return View()
     End Function
 
-    Function One(id As String) As ActionResult
+    Function One(id As String, v As Boolean?) As ActionResult
         Dim cnum As String = id 'Request.PathInfo
         Dim barcode As String = ""
 
@@ -195,6 +196,12 @@ Public Class HomeController
                             Dim attr As XmlAttribute = xmldoc.CreateAttribute("xsi", "schemaLocation", "http://www.w3.org/2001/XMLSchema-instance")
                             attr.Value = "http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
                             xmldoc.DocumentElement.Attributes.Append(attr)
+
+                            If v.HasValue AndAlso v = True Then
+                                xmldoc.Schemas.Add("http://www.loc.gov/MARC21/slim", "http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd")
+                                xmldoc.Validate(AddressOf ValidationEventHandler)
+                            End If
+
                             xmldoc.Save(xwr)
                             'Response.Write(zr.XMLData.OuterXml)
                         Catch ex As Exception
@@ -211,6 +218,11 @@ Public Class HomeController
                     Dim xml As New XmlDocument
                     xml.LoadXml(zr.XMLData.OuterXml)
 
+                    If v.HasValue AndAlso v = True Then
+                        xml.Schemas.Add("http://www.loc.gov/MARC21/slim", "http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd")
+                        xml.Validate(AddressOf ValidationEventHandler)
+                    End If
+
                     Dim xsl As New XslCompiledTransform
                     xsl.Load(HttpContext.Server.MapPath("~/app_data/MARC21slim2MODS3-4.xsl"))
 
@@ -222,6 +234,11 @@ Public Class HomeController
                     Dim xml As New XmlDocument
                     xml.LoadXml(zr.XMLData.OuterXml)
 
+                    If v.HasValue AndAlso v = True Then
+                        xml.Schemas.Add("http://www.loc.gov/MARC21/slim", "http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd")
+                        xml.Validate(AddressOf ValidationEventHandler)
+                    End If
+
                     Dim xsl As New XslCompiledTransform
                     xsl.Load(HttpContext.Server.MapPath("~/app_data/MARC21slim2English.xsl"))
 
@@ -232,6 +249,11 @@ Public Class HomeController
 
                     Dim xml As New XmlDocument
                     xml.LoadXml(zr.XMLData.OuterXml)
+
+                    If v.HasValue AndAlso v = True Then
+                        xml.Schemas.Add("http://www.loc.gov/MARC21/slim", "http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd")
+                        xml.Validate(AddressOf ValidationEventHandler)
+                    End If
 
                     Dim xsl As New XslCompiledTransform
                     xsl.Load(HttpContext.Server.MapPath("~/app_data/MARC21slim2OAIDC.xsl"))
@@ -264,6 +286,10 @@ Public Class HomeController
         Response.Write(vbCrLf & postscript)
         Return New EmptyResult
     End Function
+
+    Private Sub ValidationEventHandler(ByVal sender As Object, ByVal e As ValidationEventArgs)
+        ReturnHTTPStatus(500, String.Format("XML {0}: {1}", e.Severity, e.Message))
+    End Sub
 
     Private Sub ReturnHTTPStatus(ByVal code As Long, ByVal msg As String)
         Response.StatusCode = code
