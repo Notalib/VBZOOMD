@@ -34,62 +34,48 @@
     Public Const Z_PQF As Integer = 0
     Public Const Z_CQL As Integer = 1
 
-
+    ''' <summary>
+    ''' Given a C pointer to a string, copy the string to a managed String object
+    ''' </summary>
+    ''' <param name="ptr">C-style memory pointer</param>
+    ''' <param name="s">Length or -1 if it is null-terminated</param>
+    ''' <returns></returns>
     Public Shared Function CopyString(ptr As Integer, s As Integer) As String
-        Dim l As Integer
-        Dim ret As String
+        If ptr = 0 Then Return ""
 
-        If ptr = 0 Then
-            ret = ""
-        Else
-            If s = -1 Then
-                l = lstrlen(ptr)
-                ret = New String(vbNullChar, l)
+        Dim bytes() As Byte = ZoomUtil.CopyByteArray(ptr, s)
 
-                l = lstrcpy(ret, ptr)
+        'trim the null string terminator
+        ReDim Preserve bytes(bytes.Count - 2)
 
-                If l = 0 Then
-                    Throw New ZoomException(Nothing, ERR_WIN_API, "Unable to copy string")
-                End If
-
-            Else
-                ret = New String(vbNullChar, s)
-
-                StrCpy(ret, ptr, s)
-            End If
-
-        End If
-
-
-        Return ret
+        Return Text.Encoding.UTF8.GetString(bytes)
     End Function
 
-
+    ''' <summary>
+    ''' Given a C pointer, copy the bytes to a managed Byte Array
+    ''' </summary>
+    ''' <param name="ptr">C-style memory pointer</param>
+    ''' <param name="s">Length or -1 if it is null-terminated</param>
+    ''' <returns></returns>
     Public Shared Function CopyByteArray(ptr As Integer, s As Integer) As Byte()
-        Dim l As Integer
         Dim ret() As Byte = Nothing
 
         If ptr <> 0 Then
+            Dim iptr As New IntPtr(ptr)
             If s = -1 Then
-                l = lstrlen(ptr)
-                ReDim ret(l)
-
-                l = lstrcpybyte(ret(0), ptr)
-
-                If l = 0 Then
-                    Throw New ZoomException(Nothing, ERR_WIN_API, "Unable to copy bytes")
-                End If
-
-            Else
-                ReDim ret(s)
-
-                BytCpy(ret(0), ptr, s)
+                'count the bytes until the null terminator
+                s = 0
+                Do Until 0 = Runtime.InteropServices.Marshal.ReadByte(iptr, s)
+                    s += 1
+                Loop
             End If
-
+            ReDim ret(s)
+            Runtime.InteropServices.Marshal.Copy(iptr, ret, 0, s)
         End If
 
         Return ret
     End Function
+
 
 
     Public Shared Sub ValidateOption(who As Object, name As String, Optional value As String = "")
