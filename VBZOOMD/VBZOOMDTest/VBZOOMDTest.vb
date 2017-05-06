@@ -6,6 +6,23 @@ Imports System.Xml
 <TestClass()> Public Class VBZOOMDTest
 
     ''' <summary>
+    ''' Basic Query and USMARC Bib ID Search and Diacritics
+    ''' </summary>
+    ''' <remarks></remarks>
+    <TestMethod()>
+    Public Sub TestZoom6()
+        Dim zconn As New ZoomConnection("z3950.loc.gov", 7090)
+        zconn.ZoomOption("databaseName") = "Voyager"
+        zconn.ZoomOption("preferredRecordSyntax") = "USmarc"
+        Dim zquery As New ZoomQuery("@attr 1=12 16358795") 'bib id search
+        Dim zrs As ZoomResultSet = zconn.Search(zquery)
+        Dim rec As String = zrs.GetRecord(0).RenderRecord
+        Assert.IsTrue(rec.Contains("16358795"))
+        Assert.IsTrue(rec.Contains("Gesänge aus Nur Eine löst den Zauberspruch, oder, Wer ist glücklich"))
+    End Sub
+
+
+    ''' <summary>
     ''' Basic Query and USMARC Render Record
     ''' </summary>
     ''' <remarks></remarks>
