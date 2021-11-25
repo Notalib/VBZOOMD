@@ -182,8 +182,8 @@ Public Class ZoomRecord
         hZOOM_record = 0
         bIgnoreMARCCharacterEncoding = False
         sAssumedMARCCharacterEncoding = ZoomUtil.MARC_8
-        sYAZCharsetFrom = "marc-8"
-        sYAZCharsetTo = "utf-8"
+        sYAZCharsetFrom = ""
+        sYAZCharsetTo = ""
 
     End Sub
 

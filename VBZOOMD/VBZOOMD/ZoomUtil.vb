@@ -48,7 +48,7 @@
         'trim the null string terminator
         ReDim Preserve bytes(bytes.Count - 2)
 
-        Return Text.Encoding.UTF8.GetString(bytes)
+        Return Text.Encoding.GetEncoding(ISO_8859_1).GetString(bytes)
     End Function
 
     ''' <summary>
