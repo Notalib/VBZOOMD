@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>VBZOOMD</id>
+    <version>1.1.0</version>
+    <title>VBZOOMD</title>
+    <authors>University of Illinois at Urbana-Champaign</authors>
+    <owners>University of Illinois at Urbana-Champaign</owners>
+    <description>VB.NET Wrapper for YAZ ZOOM Z39.50 Libraries</description>
+    <copyright>Copyright © 2015 The Board of Trustees of the University of Illinois. All rights reserved.</copyright>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\VBZOOMD.dll" target="lib\netstandard2.0" />
+    <file src="bin\Release\VBZOOMD.xml" target="lib\netstandard2.0" />
+    <file src="iconv.dll" target="build\lib" />
+    <file src="libxml2.dll" target="build\lib" />
+    <file src="libxslt.dll" target="build\lib" />
+    <file src="yaz5.dll" target="build\lib" />
+    <file src="yaz5_exports.txt" target="build\lib" />
+    <file src="zlib1.dll" target="build\lib" />
+    <file src="VBZOOMD.targets" target="build" />
+  </files>
+</package>
