@@ -2,12 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>VBZOOMD</id>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <title>VBZOOMD</title>
     <authors>University of Illinois at Urbana-Champaign</authors>
     <owners>University of Illinois at Urbana-Champaign</owners>
     <description>VB.NET Wrapper for YAZ ZOOM Z39.50 Libraries</description>
     <copyright>Copyright © 2015 The Board of Trustees of the University of Illinois. All rights reserved.</copyright>
+    <repository type="git" url="https://github.com/Notalib/BibKAT.git" />
     <dependencies>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
